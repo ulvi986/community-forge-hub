@@ -183,6 +183,16 @@ const Messages = () => {
     loadConversations();
   }, [user, loadConversations]);
 
+  // Auto-select conversation from navigation state (e.g., from PublicProfile)
+  useEffect(() => {
+    const state = location.state as { selectedConversation?: string } | null;
+    if (state?.selectedConversation) {
+      setSelectedConv(state.selectedConversation);
+      // Clear the state to prevent re-selecting on re-renders
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
   // Load messages for selected conversation with realtime subscription
   useEffect(() => {
     if (!selectedConv) return;
