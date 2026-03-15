@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
 import { Sparkles, Bot, Send, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -93,7 +94,9 @@ const AIAssistant = () => {
                   : "bg-secondary text-foreground rounded-tl-md"
               }`}
             >
-              <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+              <div className="text-sm leading-relaxed whitespace-pre-wrap prose prose-sm dark:prose-invert max-w-none">
+                <ReactMarkdown>{msg.content}</ReactMarkdown>
+              </div>
             </div>
             {msg.role === "user" && (
               <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center flex-shrink-0 mt-1">
