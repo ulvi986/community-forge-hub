@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 import { motion } from "framer-motion";
 import { Sparkles, Bot, Send, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
