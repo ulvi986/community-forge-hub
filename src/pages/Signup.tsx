@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { UserPlus } from "lucide-react";
+import { UserPlus, MailCheck } from "lucide-react";
 
 const Signup = () => {
   const [firstName, setFirstName] = useState("");
@@ -15,7 +15,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [emailSent, setEmailSent] = useState(false);
   const { toast } = useToast();
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -34,17 +34,43 @@ const Signup = () => {
       password,
       options: {
         data: { first_name: firstName.trim(), last_name: lastName.trim() },
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: window.location.origin + "/login",
       },
     });
     setLoading(false);
     if (error) {
       toast({ title: "Qeydiyyat uğursuz", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Uğurlu!", description: "Hesabınız yaradıldı." });
-      navigate("/ai-assistant");
+      setEmailSent(true);
     }
   };
+
+  if (emailSent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4 }}
+          className="w-full max-w-md text-center"
+        >
+          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
+            <MailCheck size={32} className="text-primary" />
+          </div>
+          <h1 className="text-2xl font-semibold text-foreground mb-2">Emailinizi yoxlayın</h1>
+          <p className="text-muted-foreground mb-6 leading-relaxed">
+            <span className="font-medium text-foreground">{email}</span> ünvanına təsdiq mesajı göndərdik. 
+            Emailinizdəki linkə klikləyərək hesabınızı təsdiqləyin, sonra daxil olun.
+          </p>
+          <Link to="/login">
+            <Button variant="outline" className="w-full">
+              Daxil ol səhifəsinə qayıt
+            </Button>
+          </Link>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
@@ -72,47 +98,20 @@ const Signup = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
                   <Label htmlFor="firstName">Ad</Label>
-                  <Input
-                    id="firstName"
-                    placeholder="Ad"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    required
-                  />
+                  <Input id="firstName" placeholder="Ad" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="lastName">Soyad</Label>
-                  <Input
-                    id="lastName"
-                    placeholder="Soyad"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    required
-                  />
+                  <Input id="lastName" placeholder="Soyad" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="sizin@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+                <Input id="email" type="email" placeholder="sizin@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Şifrə</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Minimum 6 simvol"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                />
+                <Input id="password" type="password" placeholder="Minimum 6 simvol" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-3">
@@ -122,9 +121,7 @@ const Signup = () => {
               </Button>
               <p className="text-sm text-muted-foreground">
                 Artıq hesabınız var?{" "}
-                <Link to="/login" className="text-primary hover:underline font-medium">
-                  Daxil olun
-                </Link>
+                <Link to="/login" className="text-primary hover:underline font-medium">Daxil olun</Link>
               </p>
             </CardFooter>
           </form>

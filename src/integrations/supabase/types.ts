@@ -14,6 +14,90 @@ export type Database = {
   }
   public: {
     Tables: {
+      catering_companies: {
+        Row: {
+          created_at: string
+          icon: string
+          id: string
+          location: string
+          name: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string
+          id?: string
+          location?: string
+          name: string
+          type?: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string
+          id?: string
+          location?: string
+          name?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      communities: {
+        Row: {
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          members: number
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          members?: number
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          members?: number
+          name?: string
+        }
+        Relationships: []
+      }
+      mentors: {
+        Row: {
+          area: string
+          created_at: string
+          description: string
+          id: string
+          name: string
+          photo_url: string | null
+          years: number
+        }
+        Insert: {
+          area?: string
+          created_at?: string
+          description?: string
+          id?: string
+          name: string
+          photo_url?: string | null
+          years?: number
+        }
+        Update: {
+          area?: string
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          photo_url?: string | null
+          years?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -38,6 +122,36 @@ export type Database = {
           id?: string
           last_name?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      speakers: {
+        Row: {
+          bio: string
+          company: string
+          created_at: string
+          expertise: string
+          id: string
+          name: string
+          photo_url: string | null
+        }
+        Insert: {
+          bio?: string
+          company?: string
+          created_at?: string
+          expertise?: string
+          id?: string
+          name: string
+          photo_url?: string | null
+        }
+        Update: {
+          bio?: string
+          company?: string
+          created_at?: string
+          expertise?: string
+          id?: string
+          name?: string
+          photo_url?: string | null
         }
         Relationships: []
       }
