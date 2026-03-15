@@ -199,23 +199,21 @@ const Messages = () => {
       return;
     }
 
-    // Create new conversation
-    const { data: conv } = await supabase
-      .from("conversations" as any)
-      .insert({} as any)
-      .select("id")
-      .single();
+    // Create new conversation using server function
+    const { data: convId, error } = await supabase.rpc("create_conversation", {
+      other_user_id: otherUserId,
+    });
 
-    if (conv) {
-      const convId = (conv as any).id;
-      await supabase.from("conversation_participants" as any).insert([
-        { conversation_id: convId, user_id: user.id },
-        { conversation_id: convId, user_id: otherUserId },
-      ] as any);
-
+    if (convId && !error) {
       setDialogOpen(false);
       await loadConversations();
       setSelectedConv(convId);
+    } else {
+      toast({
+        title: "Xəta",
+        description: "Söhbət yaradıla bilmədi.",
+        variant: "destructive",
+      });
     }
   };
 
