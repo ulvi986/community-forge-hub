@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AppLayout } from "@/components/AppLayout";
 import Index from "./pages/Index";
 import Speakers from "./pages/Speakers";
@@ -28,11 +29,11 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/" element={<AppLayout><Index /></AppLayout>} />
-            <Route path="/speakers" element={<AppLayout><Speakers /></AppLayout>} />
-            <Route path="/mentors" element={<AppLayout><Mentors /></AppLayout>} />
-            <Route path="/catering" element={<AppLayout><Catering /></AppLayout>} />
-            <Route path="/communities" element={<AppLayout><Communities /></AppLayout>} />
-            <Route path="/ai-assistant" element={<AppLayout><AIAssistant /></AppLayout>} />
+            <Route path="/speakers" element={<ProtectedRoute><AppLayout><Speakers /></AppLayout></ProtectedRoute>} />
+            <Route path="/mentors" element={<ProtectedRoute><AppLayout><Mentors /></AppLayout></ProtectedRoute>} />
+            <Route path="/catering" element={<ProtectedRoute><AppLayout><Catering /></AppLayout></ProtectedRoute>} />
+            <Route path="/communities" element={<ProtectedRoute><AppLayout><Communities /></AppLayout></ProtectedRoute>} />
+            <Route path="/ai-assistant" element={<ProtectedRoute><AppLayout><AIAssistant /></AppLayout></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
