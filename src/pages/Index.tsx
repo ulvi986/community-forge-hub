@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Mic, Users, UtensilsCrossed, Globe, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import { useAuth } from "@/contexts/AuthContext";
 const cards = [
   {
     title: "Speakers",
