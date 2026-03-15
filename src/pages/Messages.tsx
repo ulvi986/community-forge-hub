@@ -242,7 +242,10 @@ const Messages = () => {
               <Button><Plus size={16} className="mr-1" /> Yeni söhbət</Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader><DialogTitle>Yeni söhbət başlat</DialogTitle></DialogHeader>
+              <DialogHeader>
+                <DialogTitle>Yeni söhbət başlat</DialogTitle>
+                <p className="text-sm text-muted-foreground">İstifadəçi axtarın və söhbətə başlayın</p>
+              </DialogHeader>
               <div className="space-y-4">
                 <div className="relative">
                   <Search size={16} className="absolute left-3 top-3 text-muted-foreground" />
