@@ -31,6 +31,15 @@ const cards = [
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleStartBuilding = () => {
+    if (user) {
+      navigate("/communities");
+    } else {
+      navigate("/login");
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto py-12 px-8">
