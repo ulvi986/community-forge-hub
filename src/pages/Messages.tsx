@@ -199,23 +199,21 @@ const Messages = () => {
       return;
     }
 
-    // Create new conversation
-    const { data: conv } = await supabase
-      .from("conversations" as any)
-      .insert({} as any)
-      .select("id")
-      .single();
+    // Create new conversation using server function
+    const { data: convId, error } = await supabase.rpc("create_conversation", {
+      other_user_id: otherUserId,
+    });
 
-    if (conv) {
-      const convId = (conv as any).id;
-      await supabase.from("conversation_participants" as any).insert([
-        { conversation_id: convId, user_id: user.id },
-        { conversation_id: convId, user_id: otherUserId },
-      ] as any);
-
+    if (convId && !error) {
       setDialogOpen(false);
       await loadConversations();
       setSelectedConv(convId);
+    } else {
+      toast({
+        title: "Xəta",
+        description: "Söhbət yaradıla bilmədi.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -244,7 +242,10 @@ const Messages = () => {
               <Button><Plus size={16} className="mr-1" /> Yeni söhbət</Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader><DialogTitle>Yeni söhbət başlat</DialogTitle></DialogHeader>
+              <DialogHeader>
+                <DialogTitle>Yeni söhbət başlat</DialogTitle>
+                <p className="text-sm text-muted-foreground">İstifadəçi axtarın və söhbətə başlayın</p>
+              </DialogHeader>
               <div className="space-y-4">
                 <div className="relative">
                   <Search size={16} className="absolute left-3 top-3 text-muted-foreground" />
