@@ -63,6 +63,7 @@ MessageBubble.displayName = "MessageBubble";
 const Messages = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const location = useLocation();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConv, setSelectedConv] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
