@@ -23,23 +23,33 @@ const Login = () => {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    const { data: authData, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     setLoading(false);
     if (error) {
       toast({ title: "Giriş uğursuz", description: error.message, variant: "destructive" });
+      return;
+    }
+
+    // Get user role and redirect accordingly
+    const userId = authData.user?.id;
+    if (userId) {
+      const { data: roleData } = await supabase.from("user_roles" as any).select("role").eq("user_id", userId).limit(1).single();
+      const role = (roleData as any)?.role || "user";
+      switch (role) {
+        case "speaker": navigate("/dashboard/speaker"); break;
+        case "mentor": navigate("/dashboard/mentor"); break;
+        case "catering": navigate("/dashboard/catering"); break;
+        case "community": navigate("/dashboard/community"); break;
+        default: navigate("/"); break;
+      }
     } else {
-      navigate("/ai-assistant");
+      navigate("/");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="w-full max-w-md"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center mx-auto mb-4">
             <span className="text-primary-foreground font-bold text-lg">CF</span>
@@ -47,7 +57,6 @@ const Login = () => {
           <h1 className="text-2xl font-semibold text-foreground">CommunityForge-a xoş gəldiniz</h1>
           <p className="text-muted-foreground mt-1">Davam etmək üçün daxil olun</p>
         </div>
-
         <Card className="border-border">
           <form onSubmit={handleLogin}>
             <CardHeader>
@@ -57,25 +66,11 @@ const Login = () => {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="sizin@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+                <Input id="email" type="email" placeholder="sizin@email.com" value={email} onChange={e => setEmail(e.target.value)} required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Şifrə</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
+                <Input id="password" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-3">
@@ -85,9 +80,7 @@ const Login = () => {
               </Button>
               <p className="text-sm text-muted-foreground">
                 Hesabınız yoxdur?{" "}
-                <Link to="/signup" className="text-primary hover:underline font-medium">
-                  Qeydiyyat
-                </Link>
+                <Link to="/signup" className="text-primary hover:underline font-medium">Qeydiyyat</Link>
               </p>
             </CardFooter>
           </form>
