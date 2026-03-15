@@ -176,8 +176,8 @@ const PublicProfile = () => {
                 )}
 
                 {user && user.id !== userId && (
-                  <Button className="mt-4" onClick={startChat}>
-                    <MessageCircle size={16} className="mr-1" /> Mesaj göndər
+                  <Button className="mt-4" onClick={startChat} disabled={startingChat}>
+                    <MessageCircle size={16} className="mr-1" /> {startingChat ? "Göndərilir..." : "Mesaj göndər"}
                   </Button>
                 )}
               </div>
