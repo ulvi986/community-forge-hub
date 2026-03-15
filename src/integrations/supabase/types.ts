@@ -41,6 +41,48 @@ export type Database = {
         }
         Relationships: []
       }
+      catering_profiles: {
+        Row: {
+          company_name: string
+          created_at: string
+          email: string | null
+          id: string
+          location: string
+          manager_first_name: string
+          manager_last_name: string
+          photo_url: string | null
+          pricing: string
+          services_offered: string
+          user_id: string
+        }
+        Insert: {
+          company_name?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          location?: string
+          manager_first_name?: string
+          manager_last_name?: string
+          photo_url?: string | null
+          pricing?: string
+          services_offered?: string
+          user_id: string
+        }
+        Update: {
+          company_name?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          location?: string
+          manager_first_name?: string
+          manager_last_name?: string
+          photo_url?: string | null
+          pricing?: string
+          services_offered?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       communities: {
         Row: {
           created_at: string
@@ -65,6 +107,134 @@ export type Database = {
           id?: string
           members?: number
           name?: string
+        }
+        Relationships: []
+      }
+      community_profiles: {
+        Row: {
+          community_name: string
+          created_at: string
+          description: string
+          email: string | null
+          id: string
+          leader_first_name: string
+          leader_last_name: string
+          locations: string
+          num_events: number
+          photo_url: string | null
+          user_id: string
+        }
+        Insert: {
+          community_name?: string
+          created_at?: string
+          description?: string
+          email?: string | null
+          id?: string
+          leader_first_name?: string
+          leader_last_name?: string
+          locations?: string
+          num_events?: number
+          photo_url?: string | null
+          user_id: string
+        }
+        Update: {
+          community_name?: string
+          created_at?: string
+          description?: string
+          email?: string | null
+          id?: string
+          leader_first_name?: string
+          leader_last_name?: string
+          locations?: string
+          num_events?: number
+          photo_url?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      conversation_participants: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_participants_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      mentor_profiles: {
+        Row: {
+          created_at: string
+          description: string
+          email: string | null
+          experience: string
+          expertise_area: string
+          first_name: string
+          id: string
+          last_name: string
+          photo_url: string | null
+          user_id: string
+          years_of_experience: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          email?: string | null
+          experience?: string
+          expertise_area?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          photo_url?: string | null
+          user_id: string
+          years_of_experience?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          email?: string | null
+          experience?: string
+          expertise_area?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          photo_url?: string | null
+          user_id?: string
+          years_of_experience?: number
         }
         Relationships: []
       }
@@ -98,6 +268,38 @@ export type Database = {
         }
         Relationships: []
       }
+      messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -122,6 +324,51 @@ export type Database = {
           id?: string
           last_name?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      speaker_profiles: {
+        Row: {
+          bio: string
+          company: string
+          created_at: string
+          email: string | null
+          experience: string
+          expertise: string
+          first_name: string
+          id: string
+          last_name: string
+          photo_url: string | null
+          user_id: string
+          years_of_experience: number
+        }
+        Insert: {
+          bio?: string
+          company?: string
+          created_at?: string
+          email?: string | null
+          experience?: string
+          expertise?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          photo_url?: string | null
+          user_id: string
+          years_of_experience?: number
+        }
+        Update: {
+          bio?: string
+          company?: string
+          created_at?: string
+          email?: string | null
+          experience?: string
+          expertise?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          photo_url?: string | null
+          user_id?: string
+          years_of_experience?: number
         }
         Relationships: []
       }
@@ -155,15 +402,47 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_conversation_member: {
+        Args: { _conversation_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "user" | "speaker" | "mentor" | "catering" | "community"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -290,6 +569,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["user", "speaker", "mentor", "catering", "community"],
+    },
   },
 } as const
