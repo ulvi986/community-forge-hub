@@ -1,26 +1,33 @@
 import { motion } from "framer-motion";
-import { Globe, Code, Rocket } from "lucide-react";
+import { Globe, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const iconMap: Record<string, React.ElementType> = { Globe, Code, Rocket };
-
-interface Community {
+interface CommunityProfile {
   id: string;
-  name: string;
+  user_id: string;
+  community_name: string;
   description: string;
-  members: number;
-  icon: string;
+  num_events: number;
+  locations: string;
+  leader_first_name: string;
+  leader_last_name: string;
+  photo_url: string | null;
 }
 
 const Communities = () => {
-  const [communities, setCommunities] = useState<Community[]>([]);
+  const [communities, setCommunities] = useState<CommunityProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
-    supabase.from("communities").select("*").then(({ data }) => {
-      setCommunities(data || []);
+    supabase.from("community_profiles").select("*").then(({ data }) => {
+      setCommunities((data as any as CommunityProfile[]) || []);
       setLoading(false);
     });
   }, []);
@@ -28,8 +35,8 @@ const Communities = () => {
   return (
     <div className="max-w-6xl mx-auto py-12 px-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground mb-2">Communities</h1>
-        <p className="text-muted-foreground mb-10">Explore existing communities and collaborate with them.</p>
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground mb-2">İcmalar</h1>
+        <p className="text-muted-foreground mb-10">Mövcud icmaları kəşf edin və onlarla əməkdaşlıq edin.</p>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -41,31 +48,52 @@ const Communities = () => {
                 <Skeleton className="h-12 w-full" />
               </div>
             ))
-          : communities.map((c, i) => {
-              const Icon = iconMap[c.icon] || Globe;
-              return (
-                <motion.div
-                  key={c.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: i * 0.08 }}
-                  whileHover={{ y: -4 }}
-                  className="bg-card rounded-xl shadow-card hover:shadow-card-hover transition-all duration-200 p-6 relative"
-                >
-                  <span className="absolute top-4 right-4 text-xs font-medium text-muted-foreground tabular-nums bg-secondary px-2 py-0.5 rounded">
-                    {c.members.toLocaleString()} members
-                  </span>
-                  <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center text-accent-foreground mb-4">
-                    <Icon size={20} />
+          : communities.map((c, i) => (
+              <motion.div
+                key={c.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.08 }}
+                whileHover={{ y: -4 }}
+                className="bg-card rounded-xl shadow-card hover:shadow-card-hover transition-all duration-200 p-6 relative"
+              >
+                <span className="absolute top-4 right-4 text-xs font-medium text-muted-foreground tabular-nums bg-secondary px-2 py-0.5 rounded">
+                  {c.num_events} tədbir
+                </span>
+                <div className="flex items-center gap-3 mb-4">
+                  <Avatar className="w-10 h-10 rounded-lg">
+                    <AvatarImage src={c.photo_url || ""} />
+                    <AvatarFallback className="bg-accent text-accent-foreground rounded-lg">
+                      <Globe size={20} />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h3 className="text-foreground font-semibold text-sm">{c.community_name}</h3>
+                    <p className="text-muted-foreground text-xs">{c.locations}</p>
                   </div>
-                  <h3 className="text-foreground font-semibold text-sm mb-2">{c.name}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed mb-5">{c.description}</p>
-                  <button className="w-full py-2 bg-foreground text-background rounded-lg text-sm font-medium transition-colors hover:opacity-90">
-                    View Community
+                </div>
+                <p className="text-muted-foreground text-sm leading-relaxed mb-5 line-clamp-3">{c.description}</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => navigate(`/profile/${c.user_id}`)}
+                    className="flex-1 py-2 bg-secondary text-foreground rounded-lg text-sm font-medium transition-colors hover:bg-secondary/80"
+                  >
+                    Profil
                   </button>
-                </motion.div>
-              );
-            })}
+                  {user && user.id !== c.user_id && (
+                    <button
+                      onClick={() => navigate(`/profile/${c.user_id}`)}
+                      className="py-2 px-3 bg-primary text-primary-foreground rounded-lg text-sm font-medium transition-colors hover:opacity-90 flex items-center gap-1"
+                    >
+                      <MessageCircle size={14} /> Mesaj
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+        {!loading && communities.length === 0 && (
+          <p className="text-muted-foreground col-span-full text-center py-8">Hələ qeydiyyatdan keçmiş icma yoxdur.</p>
+        )}
       </div>
     </div>
   );

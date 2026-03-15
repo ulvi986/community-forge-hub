@@ -15,12 +15,12 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const navItems = [
+const allNavItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
-  { title: "Speakers", url: "/speakers", icon: Mic },
-  { title: "Mentors", url: "/mentors", icon: Users },
-  { title: "Catering Companies", url: "/catering", icon: UtensilsCrossed },
-  { title: "Communities", url: "/communities", icon: Globe },
+  { title: "Spikerlər", url: "/speakers", icon: Mic },
+  { title: "Mentorlar", url: "/mentors", icon: Users },
+  { title: "Catering", url: "/catering", icon: UtensilsCrossed },
+  { title: "İcmalar", url: "/communities", icon: Globe },
   { title: "Mesajlar", url: "/messages", icon: MessageCircle },
 ];
 
@@ -45,14 +45,22 @@ export function AppSidebar() {
 
   const roleItem = role && role !== "user" ? dashboardRoutes[role] : null;
 
+  // Regular users see everything; other roles only see their dashboard, messages, AI
+  const isRegularUser = !role || role === "user";
+  const navItems = isRegularUser
+    ? allNavItems
+    : [
+        { title: "Mesajlar", url: "/messages", icon: MessageCircle },
+      ];
+
   return (
     <Sidebar collapsible="icon" className="border-r border-border">
       <div className="px-4 py-5 flex items-center gap-2.5">
         <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
-          <span className="text-primary-foreground font-bold text-sm">CF</span>
+          <span className="text-primary-foreground font-bold text-sm">C</span>
         </div>
         {!collapsed && (
-          <span className="font-semibold text-foreground text-sm tracking-tight">CommunityForge</span>
+          <span className="font-semibold text-foreground text-sm tracking-tight">Commas</span>
         )}
       </div>
 
@@ -60,6 +68,25 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
+              {/* Role-specific dashboard link first for non-user roles */}
+              {roleItem && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <NavLink
+                      to={roleItem.url}
+                      end
+                      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        location.pathname === roleItem.url ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                      }`}
+                      activeClassName="bg-accent text-accent-foreground"
+                    >
+                      <UserCircle size={18} strokeWidth={1.5} />
+                      {!collapsed && <span>{roleItem.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
+
               {navItems.map((item) => {
                 const isActive = location.pathname === item.url;
                 return (
@@ -80,25 +107,6 @@ export function AppSidebar() {
                   </SidebarMenuItem>
                 );
               })}
-
-              {/* Role-specific dashboard link */}
-              {roleItem && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <NavLink
-                      to={roleItem.url}
-                      end
-                      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        location.pathname === roleItem.url ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                      }`}
-                      activeClassName="bg-accent text-accent-foreground"
-                    >
-                      <UserCircle size={18} strokeWidth={1.5} />
-                      {!collapsed && <span>{roleItem.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )}
 
               {/* AI Assistant */}
               <SidebarMenuItem>
