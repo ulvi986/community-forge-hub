@@ -33,7 +33,7 @@ const Login = () => {
     // Get user role and redirect accordingly
     const userId = authData.user?.id;
     if (userId) {
-      const { data: roleData } = await supabase.from("user_roles" as any).select("role").eq("user_id", userId).limit(1).single();
+      const { data: roleData } = await supabase.from("user_roles" as any).select("role").eq("user_id", userId).limit(1).maybeSingle();
       const role = (roleData as any)?.role || "user";
       switch (role) {
         case "speaker": navigate("/dashboard/speaker"); break;

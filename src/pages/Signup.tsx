@@ -141,61 +141,43 @@ const Signup = () => {
       return;
     }
 
+    // Role and base profile are created by the handle_new_user trigger.
+    // Here we update role-specific profile with additional fields.
     const userId = authData.user?.id;
     if (userId) {
-      // Insert role
-      await supabase.from("user_roles" as any).insert({ user_id: userId, role: selectedRole } as any);
-
-      // Insert role-specific profile
       if (selectedRole === "speaker") {
-        await supabase.from("speaker_profiles" as any).insert({
-          user_id: userId,
-          first_name: firstName.trim(),
-          last_name: lastName.trim(),
-          email: email.trim(),
+        await supabase.from("speaker_profiles").update({
           experience: experience.trim(),
           expertise: expertise.trim(),
           company: company.trim(),
           years_of_experience: Number(yearsOfExperience) || 0,
           bio: bio.trim(),
           photo_url: photoUrl.trim() || null,
-        } as any);
+        } as any).eq("user_id", userId);
       } else if (selectedRole === "mentor") {
-        await supabase.from("mentor_profiles" as any).insert({
-          user_id: userId,
-          first_name: firstName.trim(),
-          last_name: lastName.trim(),
-          email: email.trim(),
+        await supabase.from("mentor_profiles").update({
           experience: mentorExperience.trim(),
           expertise_area: expertiseArea.trim(),
           years_of_experience: Number(mentorYears) || 0,
           description: mentorDescription.trim(),
           photo_url: photoUrl.trim() || null,
-        } as any);
+        } as any).eq("user_id", userId);
       } else if (selectedRole === "catering") {
-        await supabase.from("catering_profiles" as any).insert({
-          user_id: userId,
+        await supabase.from("catering_profiles").update({
           company_name: companyName.trim(),
           services_offered: servicesOffered.trim(),
           pricing: pricing.trim(),
           location: cateringLocation.trim(),
-          manager_first_name: managerFirstName.trim(),
-          manager_last_name: managerLastName.trim(),
-          email: email.trim(),
           photo_url: photoUrl.trim() || null,
-        } as any);
+        } as any).eq("user_id", userId);
       } else if (selectedRole === "community") {
-        await supabase.from("community_profiles" as any).insert({
-          user_id: userId,
+        await supabase.from("community_profiles").update({
           community_name: communityName.trim(),
           description: communityDescription.trim(),
           num_events: Number(numEvents) || 0,
           locations: communityLocations.trim(),
-          leader_first_name: leaderFirstName.trim(),
-          leader_last_name: leaderLastName.trim(),
-          email: email.trim(),
           photo_url: photoUrl.trim() || null,
-        } as any);
+        } as any).eq("user_id", userId);
       }
     }
 
