@@ -74,14 +74,25 @@ const PublicProfile = () => {
   const startChat = useCallback(async () => {
     if (!user || !userId) return;
 
-    const { data: convId, error } = await supabase.rpc("create_conversation", {
-      other_user_id: userId,
-    });
+    setStartingChat(true);
+    try {
+      const { data: convId, error } = await supabase.rpc("create_conversation", {
+        other_user_id: userId,
+      });
 
-    if (convId && !error) {
-      navigate("/messages");
+      if (convId && !error) {
+        navigate("/messages", { state: { selectedConversation: convId } });
+      } else {
+        console.error("create_conversation error:", error);
+        toast({ title: "Xəta", description: "Söhbət yaradıla bilmədi. Yenidən cəhd edin.", variant: "destructive" });
+      }
+    } catch (err) {
+      console.error("startChat error:", err);
+      toast({ title: "Xəta", description: "Gözlənilməz xəta baş verdi.", variant: "destructive" });
+    } finally {
+      setStartingChat(false);
     }
-  }, [user, userId, navigate]);
+  }, [user, userId, navigate, toast]);
 
   if (loading) {
     return (
