@@ -1,26 +1,33 @@
 import { motion } from "framer-motion";
-import { Coffee, UtensilsCrossed, Sandwich } from "lucide-react";
+import { UtensilsCrossed, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const iconMap: Record<string, React.ElementType> = { Coffee, UtensilsCrossed, Sandwich };
-
-interface CateringCompany {
+interface CateringProfile {
   id: string;
-  name: string;
-  type: string;
+  user_id: string;
+  company_name: string;
+  services_offered: string;
+  pricing: string;
   location: string;
-  icon: string;
+  manager_first_name: string;
+  manager_last_name: string;
+  photo_url: string | null;
 }
 
 const Catering = () => {
-  const [companies, setCompanies] = useState<CateringCompany[]>([]);
+  const [companies, setCompanies] = useState<CateringProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
-    supabase.from("catering_companies").select("*").then(({ data }) => {
-      setCompanies(data || []);
+    supabase.from("catering_profiles").select("*").then(({ data }) => {
+      setCompanies((data as any as CateringProfile[]) || []);
       setLoading(false);
     });
   }, []);
@@ -28,8 +35,8 @@ const Catering = () => {
   return (
     <div className="max-w-6xl mx-auto py-12 px-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground mb-2">Catering Companies</h1>
-        <p className="text-muted-foreground mb-10">Find catering services for meetups, hackathons, and community events.</p>
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground mb-2">Catering Şirkətləri</h1>
+        <p className="text-muted-foreground mb-10">Tədbirləriniz üçün catering xidmətləri tapın.</p>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -43,35 +50,54 @@ const Catering = () => {
                 <Skeleton className="h-4 w-32" />
               </div>
             ))
-          : companies.map((c, i) => {
-              const Icon = iconMap[c.icon] || Coffee;
-              return (
-                <motion.div
-                  key={c.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: i * 0.08 }}
-                  whileHover={{ y: -4 }}
-                  className="bg-card rounded-xl shadow-card hover:shadow-card-hover transition-all duration-200 p-6"
-                >
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center text-accent-foreground">
-                      <Icon size={22} />
-                    </div>
-                    <div>
-                      <h3 className="text-foreground font-semibold text-sm">{c.name}</h3>
-                      <p className="text-muted-foreground text-xs">{c.location}</p>
-                    </div>
+          : companies.map((c, i) => (
+              <motion.div
+                key={c.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.08 }}
+                whileHover={{ y: -4 }}
+                className="bg-card rounded-xl shadow-card hover:shadow-card-hover transition-all duration-200 p-6"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <Avatar className="w-12 h-12 rounded-xl">
+                    <AvatarImage src={c.photo_url || ""} />
+                    <AvatarFallback className="bg-accent text-accent-foreground rounded-xl">
+                      <UtensilsCrossed size={22} />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h3 className="text-foreground font-semibold text-sm">{c.company_name}</h3>
+                    <p className="text-muted-foreground text-xs">{c.location}</p>
                   </div>
-                  <span className="inline-block bg-accent text-accent-foreground px-2 py-0.5 rounded text-xs font-medium mb-5">
-                    {c.type}
+                </div>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="inline-block bg-accent text-accent-foreground px-2 py-0.5 rounded text-xs font-medium">
+                    {c.pricing || "Qiymət göstərilməyib"}
                   </span>
-                  <button className="w-full py-2 bg-foreground text-background rounded-lg text-sm font-medium transition-colors hover:opacity-90">
-                    Contact
+                </div>
+                <p className="text-muted-foreground text-sm leading-relaxed mb-5 line-clamp-3">{c.services_offered}</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => navigate(`/profile/${c.user_id}`)}
+                    className="flex-1 py-2 bg-secondary text-foreground rounded-lg text-sm font-medium transition-colors hover:bg-secondary/80"
+                  >
+                    Profil
                   </button>
-                </motion.div>
-              );
-            })}
+                  {user && user.id !== c.user_id && (
+                    <button
+                      onClick={() => navigate(`/profile/${c.user_id}`)}
+                      className="py-2 px-3 bg-primary text-primary-foreground rounded-lg text-sm font-medium transition-colors hover:opacity-90 flex items-center gap-1"
+                    >
+                      <MessageCircle size={14} /> Mesaj
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+        {!loading && companies.length === 0 && (
+          <p className="text-muted-foreground col-span-full text-center py-8">Hələ qeydiyyatdan keçmiş catering şirkəti yoxdur.</p>
+        )}
       </div>
     </div>
   );

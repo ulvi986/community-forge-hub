@@ -229,7 +229,7 @@ const Signup = () => {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="w-full max-w-2xl">
         <div className="text-center mb-8">
           <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center mx-auto mb-4">
-            <span className="text-primary-foreground font-bold text-lg">CF</span>
+            <span className="text-primary-foreground font-bold text-lg">C</span>
           </div>
           <h1 className="text-2xl font-semibold text-foreground">Qeydiyyatdan keçin</h1>
           <p className="text-muted-foreground mt-1">Hesab növünüzü seçin və qeydiyyatdan keçin</p>
