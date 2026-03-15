@@ -8,6 +8,7 @@
  * - Input validated with Zod before sending to database
  */
 import { useEffect, useState, useRef, useCallback, useMemo, memo } from "react";
+import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
