@@ -4,6 +4,7 @@
  * Uses `create_conversation` RPC for atomic chat creation.
  */
 import { useEffect, useState, useCallback } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
