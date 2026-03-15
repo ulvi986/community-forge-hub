@@ -4,6 +4,7 @@
  * Uses `create_conversation` RPC for atomic chat creation.
  */
 import { useEffect, useState, useCallback } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -28,9 +29,11 @@ const PublicProfile = () => {
   const { userId } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [role, setRole] = useState<AppRole | null>(null);
   const [loading, setLoading] = useState(true);
+  const [startingChat, setStartingChat] = useState(false);
 
   useEffect(() => {
     if (!userId) return;
@@ -71,14 +74,25 @@ const PublicProfile = () => {
   const startChat = useCallback(async () => {
     if (!user || !userId) return;
 
-    const { data: convId, error } = await supabase.rpc("create_conversation", {
-      other_user_id: userId,
-    });
+    setStartingChat(true);
+    try {
+      const { data: convId, error } = await supabase.rpc("create_conversation", {
+        other_user_id: userId,
+      });
 
-    if (convId && !error) {
-      navigate("/messages");
+      if (convId && !error) {
+        navigate("/messages", { state: { selectedConversation: convId } });
+      } else {
+        console.error("create_conversation error:", error);
+        toast({ title: "Xəta", description: "Söhbət yaradıla bilmədi. Yenidən cəhd edin.", variant: "destructive" });
+      }
+    } catch (err) {
+      console.error("startChat error:", err);
+      toast({ title: "Xəta", description: "Gözlənilməz xəta baş verdi.", variant: "destructive" });
+    } finally {
+      setStartingChat(false);
     }
-  }, [user, userId, navigate]);
+  }, [user, userId, navigate, toast]);
 
   if (loading) {
     return (
@@ -162,8 +176,8 @@ const PublicProfile = () => {
                 )}
 
                 {user && user.id !== userId && (
-                  <Button className="mt-4" onClick={startChat}>
-                    <MessageCircle size={16} className="mr-1" /> Mesaj göndər
+                  <Button className="mt-4" onClick={startChat} disabled={startingChat}>
+                    <MessageCircle size={16} className="mr-1" /> {startingChat ? "Göndərilir..." : "Mesaj göndər"}
                   </Button>
                 )}
               </div>

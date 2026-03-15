@@ -8,6 +8,7 @@
  * - Input validated with Zod before sending to database
  */
 import { useEffect, useState, useRef, useCallback, useMemo, memo } from "react";
+import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -62,6 +63,7 @@ MessageBubble.displayName = "MessageBubble";
 const Messages = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const location = useLocation();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConv, setSelectedConv] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -180,6 +182,16 @@ const Messages = () => {
     if (!user) return;
     loadConversations();
   }, [user, loadConversations]);
+
+  // Auto-select conversation from navigation state (e.g., from PublicProfile)
+  useEffect(() => {
+    const state = location.state as { selectedConversation?: string } | null;
+    if (state?.selectedConversation) {
+      setSelectedConv(state.selectedConversation);
+      // Clear the state to prevent re-selecting on re-renders
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   // Load messages for selected conversation with realtime subscription
   useEffect(() => {
