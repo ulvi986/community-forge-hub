@@ -34,11 +34,11 @@ const App = () => (
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/" element={<AppLayout><Index /></AppLayout>} />
-            <Route path="/speakers" element={<ProtectedRoute><AppLayout><Speakers /></AppLayout></ProtectedRoute>} />
-            <Route path="/mentors" element={<ProtectedRoute><AppLayout><Mentors /></AppLayout></ProtectedRoute>} />
-            <Route path="/catering" element={<ProtectedRoute><AppLayout><Catering /></AppLayout></ProtectedRoute>} />
-            <Route path="/communities" element={<ProtectedRoute><AppLayout><Communities /></AppLayout></ProtectedRoute>} />
+            <Route path="/" element={<ProtectedRoute userOnly><AppLayout><Index /></AppLayout></ProtectedRoute>} />
+            <Route path="/speakers" element={<ProtectedRoute userOnly><AppLayout><Speakers /></AppLayout></ProtectedRoute>} />
+            <Route path="/mentors" element={<ProtectedRoute userOnly><AppLayout><Mentors /></AppLayout></ProtectedRoute>} />
+            <Route path="/catering" element={<ProtectedRoute userOnly><AppLayout><Catering /></AppLayout></ProtectedRoute>} />
+            <Route path="/communities" element={<ProtectedRoute userOnly><AppLayout><Communities /></AppLayout></ProtectedRoute>} />
             <Route path="/ai-assistant" element={<ProtectedRoute><AppLayout><AIAssistant /></AppLayout></ProtectedRoute>} />
             <Route path="/dashboard/speaker" element={<ProtectedRoute><AppLayout><SpeakerDashboard /></AppLayout></ProtectedRoute>} />
             <Route path="/dashboard/mentor" element={<ProtectedRoute><AppLayout><MentorDashboard /></AppLayout></ProtectedRoute>} />
