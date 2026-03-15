@@ -59,7 +59,7 @@ const Index = () => {
         <div className="flex gap-4 flex-wrap">
           <motion.button
             whileTap={{ scale: 0.97 }}
-            onClick={() => navigate("/communities")}
+            onClick={handleStartBuilding}
             className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg text-sm font-medium transition-colors hover:opacity-90"
           >
             Start Building a Community
